@@ -33,7 +33,7 @@ def run_pipeline(year=None, month=None):
 
 
     # =========================
-    # HOJA 1 – VENTAS
+    # HOJA 1 - PAGOS PERI
     # =========================
     logger.info("Procesando hoja de PAGOS PERI")
 
@@ -50,7 +50,7 @@ def run_pipeline(year=None, month=None):
     else:
         df_final_pagos = transform_pagos_peri(df_salary_peri_raw)
         # =========================
-    # HOJA 2 – EGRESOS / GASTOS
+    # HOJA 2 – PAGOSPROY
     # =========================
  
     logger.info("Procesando hoja de PAGOSPROY")

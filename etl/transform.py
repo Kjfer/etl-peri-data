@@ -56,7 +56,7 @@ def transform_pagos_peri(df):
         "category_id": 13,
         "amount": df["monto_total"].apply(parse_decimal),
         "description": "Sueldos del personal de PERI",
-        "from_account": "Yape",
+        "from_account": "BCP",
         "to_account": None,
         "is_invoiced": False,
         "id_referenced": df["id_pago"].astype(str)
