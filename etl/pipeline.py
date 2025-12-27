@@ -19,7 +19,7 @@ def run_pipeline(year=None, month=None):
     # =========================
     # DEFINICIÓN DE PERIODO
     # =========================
-    today = date(2025,8,1)
+    today = date(2025,9,1)
     if today.month == 1:
         target_year = today.year - 1
         target_month = 12
