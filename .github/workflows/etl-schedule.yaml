@@ -77,18 +77,96 @@ jobs:
       print('private_key_length:', len(pk) if isinstance(pk, str) else 0)
     else:
       print('ERROR: formato inválido para GOOGLE_SERVICE_ACCOUNT_JSON')
+    name: ETL - Programado
+
+    on:
+      # Edita la expresión cron abajo para fijar la fecha/horario deseado (UTC)
+      schedule:
+        - cron: '0 7 1 * *' # ejemplo: cada mes el día 1 a las 07:00 UTC
+      workflow_dispatch:
+        inputs:
+          cron:
+            description: 'Cron schedule (opcional) — referencia'
+            required: false
+
+    jobs:
+      run-etl:
+        runs-on: ubuntu-latest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          ASISTENCIA_SHEET_ID: ${{ secrets.ASISTENCIA_SHEET_ID }}
+          WORKSHEET_NAME_1: ${{ secrets.WORKSHEET_NAME_1 }}
+          WORKSHEET_NAME_2: ${{ secrets.WORKSHEET_NAME_2 }}
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+              python-version: '3.x'
+
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+          - name: Verify GOOGLE_SERVICE_ACCOUNT_JSON format
+            env:
+              GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+            run: |
+              python - <<'PY'
+    import os, json, base64, binascii
+    s = os.environ.get('GOOGLE_SERVICE_ACCOUNT_JSON','')
+    def detector(s):
+        try:
+            json.loads(s)
+            return 'raw'
+        except Exception:
+            pass
+        try:
+            json.loads(s.replace('\\n','\n'))
+            return 'escaped_newlines'
+        except Exception:
+            pass
+        try:
+            base64.b64decode(s)
+            dec = base64.b64decode(s).decode('utf-8')
+            json.loads(dec)
+            return 'base64'
+        except Exception:
+            pass
+        return 'invalid'
+
+    res = detector(s)
+    print('DETECTOR_RESULT:', res)
+    if res != 'invalid':
+        if res == 'base64':
+            d = base64.b64decode(s).decode('utf-8')
+        elif res == 'escaped_newlines':
+            d = s.replace('\\n','\n')
+        else:
+            d = s
+        obj = json.loads(d)
+        # Mostrar sólo las keys y longitud de private_key (no su contenido)
+        print('KEYS:', list(obj.keys()))
+        pk = obj.get('private_key','')
+        print('private_key_length:', len(pk) if isinstance(pk, str) else 0)
+    else:
+        print('ERROR: formato inválido para GOOGLE_SERVICE_ACCOUNT_JSON')
     PY
-        shell: bash
+            shell: bash
 
-      - name: Run ETL pipeline
-        run: |
-          python etl/pipeline.py
+          - name: Run ETL pipeline
+            run: |
+              python etl/pipeline.py
 
-      
 
-# Notas:
-# - Modifica la línea `cron` en la sección `schedule` para ajustar la fecha/horario.
-# - GitHub Actions usa UTC para cron expressions.
-# - Ejemplos de cron:
-#   - Cada mes día 27 a 09:00 UTC: '0 9 27 * *'
-#   - Cada año 27 diciembre a 09:00 UTC: '0 9 27 12 *'
+    # Notas:
+    # - Modifica la línea `cron` en la sección `schedule` para ajustar la fecha/horario.
+    # - GitHub Actions usa UTC para cron expressions.
+    # - Ejemplos de cron:
+    #   - Cada mes día 27 a 09:00 UTC: '0 9 27 * *'
+    #   - Cada año 27 diciembre a 09:00 UTC: '0 9 27 12 *'
