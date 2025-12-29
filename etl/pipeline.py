@@ -75,6 +75,44 @@ def run_pipeline(year=None, month=None):
         ignore_index=True
     )
 
+    def get_manual_records(target_year, target_month):
+        return pd.DataFrame([
+            {
+                "date": f"{target_year}-{target_month:02d}-01",
+                "type": "expense",
+                "business_id": 1,
+                "category_id": 13,
+                "amount": 1244000.00,
+                "description": "Sueldos del personal de PERI",
+                "from_account": "Cuentas Colombia",
+                "to_account": None,
+                "is_invoiced": False,
+                "id_referenced": None,
+                "currency": "COP"
+            },
+            {
+                "date": f"{target_year}-{target_month:02d}-01",
+                "type": "expense",
+                "business_id": 1,
+                "category_id": 13,
+                "amount": 1244000.00,
+                "description": "Sueldos del personal de PERI",
+                "from_account": "Cuentas Colombia",
+                "to_account": None,
+                "is_invoiced": False,
+                "id_referenced": None,
+                "currency": "COP"
+            }
+    ])
+
+    df_manual = get_manual_records(target_year, target_month)
+
+    df_final = pd.concat(
+       [df_final, df_manual],
+       ignore_index=True
+    )
+
+
     logger.info(f"Total registros consolidados: {len(df_final)}")
 """""
     if df_final.empty:
