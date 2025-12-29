@@ -76,7 +76,7 @@ def run_pipeline(year=None, month=None):
     )
 
     logger.info(f"Total registros consolidados: {len(df_final)}")
-
+"""""
     if df_final.empty:
         logger.warning("No hay datos para cargar este mes")
         return
@@ -84,6 +84,7 @@ def run_pipeline(year=None, month=None):
     load(df_final)
 
     logger.info("===== ETL MENSUAL FINALIZADO CORRECTAMENTE =====")
+"""
 
 if __name__ == "__main__":
     run_pipeline()

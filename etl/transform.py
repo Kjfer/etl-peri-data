@@ -44,7 +44,17 @@ def parse_decimal(value):
 
 
 def transform_pagos_peri(df):
-    
+    def normalize_dni(dni):
+        if dni == 34 or dni == 33:
+            return "USD"
+        else:
+            return "PEN"
+        
+    def normalize_account(dni):
+        if dni == 34 or dni == 33:
+            return "Cuentas Ecuador"
+        else:
+            return "BCP"
 
     # =========================
     # TRANSFORMACIÓN
@@ -56,10 +66,11 @@ def transform_pagos_peri(df):
         "category_id": 13,
         "amount": df["monto_total"].apply(parse_decimal),
         "description": "Sueldos del personal de PERI",
-        "from_account": "BCP",
+        "from_account": df["DNI"].apply(normalize_account),
         "to_account": None,
         "is_invoiced": False,
-        "id_referenced": df["id_pago"].astype(str)
+        "id_referenced": df["id_pago"].astype(str),
+        "currency": df["DNI"].apply(normalize_dni)
     })
 
     logger.info(
@@ -91,7 +102,8 @@ def transform_pagos_proy_peri(df):
         "from_account": "Yape",
         "to_account": None,
         "is_invoiced": False,
-        "id_referenced": df["id_pago"].astype(str)
+        "id_referenced": df["id_pago"].astype(str),
+        "currency": "PEN"
     })
 
     logger.info(
