@@ -80,28 +80,28 @@ def run_pipeline(year=None, month=None):
             {
                 "date": f"{target_year}-{target_month:02d}-01",
                 "type": "expense",
-                "business_id": 1,
+                "business_id": "negocio2",
                 "category_id": 13,
-                "amount": 1244000.00,
+                "amount": 1244.00,
                 "description": "Sueldos del personal de PERI",
                 "from_account": "Cuentas Colombia",
                 "to_account": None,
                 "is_invoiced": False,
                 "id_referenced": None,
-                "currency": "COP"
+                "currency": "PEN"
             },
             {
                 "date": f"{target_year}-{target_month:02d}-01",
                 "type": "expense",
-                "business_id": 1,
+                "business_id": "negocio2",
                 "category_id": 13,
-                "amount": 1244000.00,
+                "amount": 1244.00,
                 "description": "Sueldos del personal de PERI",
                 "from_account": "Cuentas Colombia",
                 "to_account": None,
                 "is_invoiced": False,
                 "id_referenced": None,
-                "currency": "COP"
+                "currency": "PEN"
             }
     ])
 
@@ -114,7 +114,7 @@ def run_pipeline(year=None, month=None):
 
 
     logger.info(f"Total registros consolidados: {len(df_final)}")
-"""""
+
     if df_final.empty:
         logger.warning("No hay datos para cargar este mes")
         return
@@ -122,7 +122,7 @@ def run_pipeline(year=None, month=None):
     load(df_final)
 
     logger.info("===== ETL MENSUAL FINALIZADO CORRECTAMENTE =====")
-"""
+
 
 if __name__ == "__main__":
     run_pipeline()
